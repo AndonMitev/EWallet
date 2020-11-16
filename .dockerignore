@@ -1,0 +1,21 @@
+# Build
+/cover/
+/deps/
+/docs/
+/.fetch
+node_modules
+
+# Erlang
+erl_crash.dump
+
+# Public
+/public/uploads
+!/public/uploads/test.txt
+
+# Dev
+/.git
+/.github
+.env
+.DS_Store
+Thumbs.db
+.elixir_ls

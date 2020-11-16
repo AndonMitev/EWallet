@@ -1,0 +1,92 @@
+# Copyright 2018-2019 OmiseGO Pte Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+defmodule AdminAPI.V1.ExportController do
+  use AdminAPI, :controller
+  import AdminAPI.V1.ErrorHandler
+  alias EWallet.{ExportGate, ExportPolicy}
+  alias EWallet.Web.{Originator, Orchestrator, Paginator, V1.ExportOverlay}
+  alias EWalletDB.Export
+  alias Utils.Helpers.PathResolver
+
+  def all(conn, attrs) do
+    with {:ok, %{query: query}} <- authorize(:all, conn.assigns, nil),
+         true <- !is_nil(query) || {:error, :unauthorized} do
+      storage_adapter = Application.get_env(:admin_api, :file_storage_adapter)
+
+      conn.assigns
+      |> Originator.extract()
+      |> Export.all_for(storage_adapter, query)
+      |> Orchestrator.query(ExportOverlay, attrs)
+      |> render_exports(conn)
+    else
+      {:error, code} -> handle_error(conn, code)
+    end
+  end
+
+  @spec get(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def get(conn, %{"id" => id} = attrs) do
+    storage_adapter = Application.get_env(:admin_api, :file_storage_adapter)
+
+    with %Export{} = export <- Export.get(id) || {:error, :unauthorized},
+         {:ok, _} <- authorize(:get, conn.assigns, export),
+         true <- export.adapter == storage_adapter || {:error, :invalid_storage_adapter},
+         {:ok, url} <- ExportGate.generate_url(export),
+         export <- Map.put(export, :url, url),
+         {:ok, export} <- Orchestrator.one(export, ExportOverlay, attrs) do
+      render(conn, :export, %{export: export})
+    else
+      {:error, code} -> handle_error(conn, code)
+    end
+  end
+
+  def get(conn, _), do: handle_error(conn, :invalid_parameter)
+
+  def download(conn, %{"id" => id}) do
+    storage_adapter = Application.get_env(:admin_api, :file_storage_adapter)
+
+    with %Export{} = export <- Export.get(id) || {:error, :unauthorized},
+         {:ok, _} <- authorize(:download, conn.assigns, export),
+         true <- export.adapter == "local" || {:error, :export_not_local},
+         true <- export.adapter == storage_adapter || {:error, :invalid_storage_adapter},
+         path <- Path.join(PathResolver.static_dir(:url_dispatcher), export.path),
+         true <- File.exists?(path) || {:error, :file_not_found} do
+      send_download(
+        conn,
+        {:file, path},
+        filename: export.filename,
+        content_type: "text/csv",
+        charset: "utf-8"
+      )
+    else
+      {:error, code} -> handle_error(conn, code)
+    end
+  end
+
+  def download(conn, _), do: handle_error(conn, :invalid_parameter)
+
+  defp render_exports(%Paginator{} = paged_exports, conn) do
+    render(conn, :exports, %{exports: paged_exports})
+  end
+
+  defp render_exports({:error, code, description}, conn) do
+    handle_error(conn, code, description)
+  end
+
+  @spec authorize(:all | :create | :get | :update, map(), String.t() | nil) ::
+          :ok | {:error, any()} | no_return()
+  defp authorize(action, actor, export) do
+    ExportPolicy.authorize(action, actor, export)
+  end
+end

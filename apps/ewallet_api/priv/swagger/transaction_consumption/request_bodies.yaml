@@ -1,0 +1,27 @@
+ConsumptionConfirmationRequestBody:
+  description: Approve or reject a consumption using the specified ID.
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+        required:
+          - id
+        example:
+          id: 'txc_01cbfg5m2ee06kzm8tbysfmmw5'
+
+ConsumptionCancellationRequestBody:
+  description: Cancel an owned pending consumption using the specified ID.
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+        required:
+          - id
+        example:
+          id: 'txc_01cbfg5m2ee06kzm8tbysfmmw5'

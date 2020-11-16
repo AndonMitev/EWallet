@@ -1,0 +1,69 @@
+user.signup:
+  post:
+    tags:
+      - User
+    summary: Sign up a new user
+    operationId: user_signup
+    requestBody:
+      $ref: 'request_bodies.yaml#/UserSignupBody'
+    responses:
+      '200':
+        $ref: 'responses.yaml#/UserResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+        
+user.verify_email:
+  post:
+    tags:
+      - User
+    summary: Verify the email for a user
+    operationId: user_verify_email
+    requestBody:
+      $ref: 'request_bodies.yaml#/UserVerifyEmailBody'
+    responses:
+      '200':
+        $ref: 'responses.yaml#/UserResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+
+user.reset_password:
+  post:
+    tags:
+      - User
+    summary: Request a password reset
+    operationId: user_reset_password
+    requestBody:
+      $ref: 'request_bodies.yaml#/UserResetPasswordBody'
+    responses:
+      '200':
+        $ref: 'responses.yaml#/UserResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+
+user.update_password:
+  post:
+    tags:
+      - User
+    summary: Perform a password reset
+    operationId: user_update_password
+    requestBody:
+      $ref: 'request_bodies.yaml#/UserUpdatePasswordBody'
+    responses:
+      '200':
+        $ref: 'responses.yaml#/UserResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+
+me.get:
+  post:
+    tags:
+      - User
+    summary: Get the user corresponding to the provided authentication token.
+    operationId: me_get
+    security:
+      - ClientAuth: []
+    responses:
+      '200':
+        $ref: 'responses.yaml#/UserResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'

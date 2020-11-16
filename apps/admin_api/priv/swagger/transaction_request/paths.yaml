@@ -1,0 +1,104 @@
+transaction_request.all:
+  post:
+    tags:
+      - Transaction request
+    summary: Get the list of transaction requests
+    operationId: transaction_request_all
+    security:
+      - ProviderAuth: []
+      - AdminAuth: []
+    requestBody:
+      $ref: '../../../../ewallet/priv/swagger/shared/request_bodies.yaml#/PaginatedRequestBody'
+    responses:
+      '200':
+        $ref: 'responses.yaml#/TransactionRequestsResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+
+transaction_request.create:
+  post:
+    tags:
+      - Transaction request
+    summary: Create a new transaction request.
+    description: This is a server call only.
+    operationId: transaction_request_create
+    security:
+      - ProviderAuth: []
+      - AdminAuth: []
+    requestBody:
+      $ref: 'request_bodies.yaml#/CreateTransactionRequestBody'
+    responses:
+      '200':
+        $ref: 'responses.yaml#/TransactionRequestResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+
+transaction_request.get:
+  post:
+    tags:
+      - Transaction request
+    summary: Get a transaction request.
+    description: This is a server call only.
+    operationId: transaction_request_get
+    security:
+      - ProviderAuth: []
+      - AdminAuth: []
+    requestBody:
+      $ref: 'request_bodies.yaml#/GetTransactionRequestBody'
+    responses:
+      '200':
+        $ref: 'responses.yaml#/TransactionRequestResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+
+transaction_request.cancel:
+  post:
+    tags:
+      - TransactionRequest
+    summary: Cancel a transaction request.
+    operationId: transaction_request_cancel
+    security:
+      - ProviderAuth: []
+      - AdminAuth: []
+    requestBody:
+      $ref: 'request_bodies.yaml#/CancelTransactionRequestBody'
+    responses:
+      '200':
+        $ref: 'responses.yaml#/TransactionRequestResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+
+transaction_request.get_transaction_consumptions:
+  post:
+    tags:
+      - Transaction request
+    summary: Get the list of transaction consumptions for a transaction request
+    operationId: transaction_request_get_consumptions
+    security:
+      - ProviderAuth: []
+      - AdminAuth: []
+    requestBody:
+      $ref: 'request_bodies.yaml#/TransactionConsumptionAllForTransactionRequestBody'
+    responses:
+      '200':
+        $ref: '../transaction_consumption/responses.yaml#/TransactionConsumptionsResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'
+
+transaction_request.consume:
+  post:
+    tags:
+      - Transaction request
+    summary: Consume a transaction request.
+    description: This is a server call only.
+    operationId: transaction_request_consume
+    security:
+      - ProviderAuth: []
+      - AdminAuth: []
+    requestBody:
+      $ref: 'request_bodies.yaml#/ConsumeTransactionRequestBody'
+    responses:
+      '200':
+        $ref: '../transaction_consumption/responses.yaml#/TransactionConsumptionResponse'
+      '500':
+        $ref: '../../../../ewallet/priv/swagger/shared/responses.yaml#/InternalServerError'

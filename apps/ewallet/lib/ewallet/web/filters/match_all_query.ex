@@ -1,0 +1,230 @@
+# Copyright 2018-2019 OmiseGO Pte Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Skipping cyclomatic complexity check for this file as the query conditions are unavoidable.
+# credo:disable-for-this-file Credo.Check.Refactor.CyclomaticComplexity
+defmodule EWallet.Web.MatchAllQuery do
+  @moduledoc """
+  Functions to build the actual query elements.
+  """
+  import Ecto.Query
+
+  #
+  # Allowed comparators for uuid field type
+  #
+
+  def do_filter(dynamic, field, :uuid, comparator, value) do
+    case comparator do
+      "eq" ->
+        dynamic([q], fragment("?::text", field(q, ^field)) == ^value and ^dynamic)
+
+      "neq" ->
+        dynamic([q], fragment("?::text", field(q, ^field)) != ^value and ^dynamic)
+
+      "contains" ->
+        dynamic([q], ilike(fragment("?::text", field(q, ^field)), ^"%#{value}%") and ^dynamic)
+
+      "starts_with" ->
+        dynamic([q], ilike(fragment("?::text", field(q, ^field)), ^"#{value}%") and ^dynamic)
+
+      _ ->
+        not_supported(field, comparator, value)
+    end
+  end
+
+  #
+  # Allowed comparators for datetime field type
+  #
+
+  def do_filter(dynamic, field, :datetime, comparator, %NaiveDateTime{} = value) do
+    case comparator do
+      "eq" -> dynamic([q], field(q, ^field) == ^value and ^dynamic)
+      "neq" -> dynamic([q], field(q, ^field) != ^value and ^dynamic)
+      "gt" -> dynamic([q], field(q, ^field) > ^value and ^dynamic)
+      "gte" -> dynamic([q], field(q, ^field) >= ^value and ^dynamic)
+      "lt" -> dynamic([q], field(q, ^field) < ^value and ^dynamic)
+      "lte" -> dynamic([q], field(q, ^field) <= ^value and ^dynamic)
+      _ -> not_supported(field, comparator, value)
+    end
+  end
+
+  def do_filter(dynamic, field, :datetime, comparator, value) do
+    case NaiveDateTime.from_iso8601(value) do
+      {:ok, datetime} -> do_filter(dynamic, field, :datetime, comparator, datetime)
+      {:error, :invalid_format} -> invalid_value(field, comparator, value)
+    end
+  end
+
+  #
+  # Allowed filters for arbitary field types
+  #
+
+  def do_filter(dynamic, field, nil, comparator, nil = value) do
+    case comparator do
+      "eq" -> dynamic([q], is_nil(field(q, ^field)) and ^dynamic)
+      "neq" -> dynamic([q], not is_nil(field(q, ^field)) and ^dynamic)
+      _ -> not_supported(field, comparator, value)
+    end
+  end
+
+  def do_filter(dynamic, field, nil, comparator, value) do
+    case comparator do
+      "eq" -> dynamic([q], field(q, ^field) == ^value and ^dynamic)
+      "neq" -> dynamic([q], field(q, ^field) != ^value and ^dynamic)
+      "gt" -> dynamic([q], field(q, ^field) > ^value and ^dynamic)
+      "gte" -> dynamic([q], field(q, ^field) >= ^value and ^dynamic)
+      "lt" -> dynamic([q], field(q, ^field) < ^value and ^dynamic)
+      "lte" -> dynamic([q], field(q, ^field) <= ^value and ^dynamic)
+      "contains" -> dynamic([q], ilike(field(q, ^field), ^"%#{value}%") and ^dynamic)
+      "starts_with" -> dynamic([q], ilike(field(q, ^field), ^"#{value}%") and ^dynamic)
+      _ -> not_supported(field, comparator, value)
+    end
+  end
+
+  # March 11, 2019
+  #
+  # Previous implementations had a 5-assocation limit and required hard-cording it's position.
+  # The original plan to fix this issue was to utilize Ecto's named binding feature. However,
+  # that required creating compile time atoms for every association within our schema.
+  # So, named binding was abandoned. Instead, Dynamic queries with dynamic positiong was used.
+  # This allowed for any number of associations and without the use of compile-time atoms.
+  #
+  # The use of {a, position} within dynamic() is an internal implementation.
+  # Links on this topic:
+  # https://github.com/elixir-ecto/ecto/issues/2832
+  # https://stackoverflow.com/a/54491195/11157034
+  #
+  # It is possible that this feature will become part of the Eto API in the future.
+  # (Designed with Ecto 3.0)  If this interanl implementation disappears, one can use
+  # the named binding implementation  specified in Issue 783, link is below. Or revert back
+  # to 5-association limit if there are no other paths.
+  #
+  # This only affects do_filter_assoc()
+  #
+  # This was implemented for issue 783: https://github.com/omisego/ewallet/issues/783
+  # Related PR: https://github.com/omisego/ewallet/pull/834
+  #
+
+  #
+  # Allowed comparators for uuid field type within an association
+  #
+
+  def do_filter_assoc(dynamic, position, field, :uuid, comparator, value) do
+    case comparator do
+      "eq" ->
+        dynamic([{a, position}], fragment("?::text", field(a, ^field)) == ^value and ^dynamic)
+
+      "neq" ->
+        dynamic([{a, position}], fragment("?::text", field(a, ^field)) != ^value and ^dynamic)
+
+      "contains" ->
+        dynamic(
+          [{a, position}],
+          ilike(fragment("?::text", field(a, ^field)), ^"%#{value}%") and ^dynamic
+        )
+
+      "starts_with" ->
+        dynamic(
+          [{a, position}],
+          ilike(fragment("?::text", field(a, ^field)), ^"#{value}%") and ^dynamic
+        )
+
+      _ ->
+        not_supported(field, comparator, value)
+    end
+  end
+
+  #
+  # Allowed comparators for datetime field type within an association
+  #
+
+  def do_filter_assoc(dynamic, position, field, :datetime, comparator, %NaiveDateTime{} = value) do
+    case comparator do
+      "eq" -> dynamic([{a, position}], field(a, ^field) == ^value and ^dynamic)
+      "neq" -> dynamic([{a, position}], field(a, ^field) != ^value and ^dynamic)
+      "gt" -> dynamic([{a, position}], field(a, ^field) > ^value and ^dynamic)
+      "lte" -> dynamic([{a, position}], field(a, ^field) >= ^value and ^dynamic)
+      "lt" -> dynamic([{a, position}], field(a, ^field) < ^value and ^dynamic)
+      "gte" -> dynamic([{a, position}], field(a, ^field) >= ^value and ^dynamic)
+      _ -> not_supported(field, comparator, value)
+    end
+  end
+
+  def do_filter_assoc(dynamic, position, field, :datetime, comparator, value) do
+    case NaiveDateTime.from_iso8601(value) do
+      {:ok, datetime} ->
+        do_filter_assoc(dynamic, position, field, :datetime, comparator, datetime)
+
+      {:error, :invalid_format} ->
+        invalid_value(field, comparator, value)
+    end
+  end
+
+  #
+  # Allowed filters for arbitary field types within an association
+  #
+
+  def do_filter_assoc(dynamic, position, field, nil, comparator, nil = value) do
+    case comparator do
+      "eq" -> dynamic([{a, position}], is_nil(field(a, ^field)) and ^dynamic)
+      "neq" -> dynamic([{a, position}], not is_nil(field(a, ^field)) and ^dynamic)
+      _ -> not_supported(field, comparator, value)
+    end
+  end
+
+  def do_filter_assoc(dynamic, position, field, nil, comparator, value) do
+    case comparator do
+      "eq" ->
+        dynamic([{a, position}], field(a, ^field) == ^value and ^dynamic)
+
+      "neq" ->
+        dynamic([{a, position}], field(a, ^field) != ^value and ^dynamic)
+
+      "gt" ->
+        dynamic([{a, position}], field(a, ^field) > ^value and ^dynamic)
+
+      "gte" ->
+        dynamic([{a, position}], field(a, ^field) >= ^value and ^dynamic)
+
+      "lt" ->
+        dynamic([{a, position}], field(a, ^field) < ^value and ^dynamic)
+
+      "lte" ->
+        dynamic([{a, position}], field(a, ^field) <= ^value and ^dynamic)
+
+      "contains" ->
+        dynamic([{a, position}], ilike(field(a, ^field), ^"%#{value}%") and ^dynamic)
+
+      "starts_with" ->
+        dynamic([{a, position}], ilike(field(a, ^field), ^"#{value}%") and ^dynamic)
+
+      _ ->
+        not_supported(field, comparator, value)
+    end
+  end
+
+  #
+  # Resolutions for unhappy paths
+  #
+
+  defp not_supported(field, comparator, value) do
+    {:error, :comparator_not_supported,
+     field: Atom.to_string(field), comparator: comparator, value: value}
+  end
+
+  defp invalid_value(field, comparator, value) do
+    {:error, :invalid_filter_value,
+     field: Atom.to_string(field), comparator: comparator, value: value}
+  end
+end

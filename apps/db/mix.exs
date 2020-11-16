@@ -1,0 +1,44 @@
+defmodule DB.Mixfile do
+  use Mix.Project
+
+  def project do
+    [
+      app: :db,
+      version: "2.0.0-dev",
+      build_path: "../../_build",
+      deps_path: "../../deps",
+      lockfile: "../../mix.lock",
+      elixir: "~> 1.8",
+      elixirc_paths: elixirc_paths(Mix.env),
+      start_permanent: Mix.env == :prod,
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
+      deps: deps()
+    ]
+  end
+
+  # Configuration for the OTP application.
+  #
+  # Type `mix help compile.app` for more information.
+  def application do
+    []
+  end
+
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_),     do: ["lib"]
+
+  # Specifies your project dependencies.
+  #
+  # Type `mix help deps` for examples and options.
+  defp deps do
+    [
+      {:db_connection, "~> 2.0"}
+    ]
+  end
+end

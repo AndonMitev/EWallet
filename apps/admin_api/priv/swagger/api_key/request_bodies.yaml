@@ -1,0 +1,186 @@
+AccessKeyCreateBody:
+  description: The parameters to use for creating an access key
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          account_id:
+            type: string
+          role_name:
+            type: string
+          name:
+            type: string
+          global_role:
+            type: string
+        example:
+          name: my_key
+          global_role: none
+
+AccessKeyGetBody:
+  description: The parameters to use for retrieving a specific access key
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+        required:
+          - id
+        example:
+          id: key_01ce83yphmq6vt4qnmn3ykwcw6
+
+AccessKeyUpdateBody:
+  description: The parameters to use for updating an access key
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          global_role:
+            type: string
+        required:
+          - id
+        example:
+          id: key_01ce83yphmq6vt4qnmn3ykwcw6
+          name: my_key
+          global_role: none
+
+AccessKeyToggleStatusBody:
+  description: The parameters to enable/disable an access key. Send enabled=true to enable, enabled=false to disable.
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+          enabled:
+            type: boolean
+        required:
+          - id
+          - enabled
+        example:
+          id: key_01ce83yphmq6vt4qnmn3ykwcw6
+          enabled: false
+
+AccessKeyDeleteBody:
+  description: The parameters to use for deleting an access key
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        oneOf:
+          - properties:
+              id:
+                type: string
+            required:
+              - id
+            example:
+              id: key_01ce83yphmq6vt4qnmn3ykwcw6
+          - properties:
+              access_key:
+                type: string
+            required:
+              - access_key
+            example:
+              access_key: jZKpGKgwy5LJTWwXqSD4jVWYDdnTKHlRYkaNB6SqsaQ
+        example:
+          id: key_01ce83yphmq6vt4qnmn3ykwcw6
+
+KeyListBody:
+  description: The parameters to use for listing a key's data
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        allOf:
+        - $ref: '../../../../ewallet/priv/swagger/shared/schemas.yaml#/PaginatedRequestBodySchema'
+        properties:
+          id:
+            type: string
+        required:
+          - id
+        example:
+          id: key_01ce843mvg5fa1zpk5myy69h4q
+
+# API KEY REQUEST BODIES
+APIKeyCreateBody:
+  description: The parameters to use for creating an API key
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          name:
+            type: string
+        example:
+          name: my_api_key
+
+APIKeyGetBody:
+  description: The parameters to use for retrieving a specific api key
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+        required:
+          - id
+        example:
+          id: api_01d744xm9cy3qx8hdwv4ax3k1h
+
+APIKeyUpdateBody:
+  description: The parameters to use for updating an API key
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+          name:
+            type: name
+        required:
+          - id
+        example:
+          id: api_01ce83yphmq6vt4qnmn3ykwcw6
+          name: my_api_key
+
+APIKeyToggleStatusBody:
+  description: The parameters to enable/disable an api key. Send enabled=true to enable, enabled=false to disable.
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+          enabled:
+            type: boolean
+        required:
+          - id
+          - enabled
+        example:
+          id: api_01ce83yphmq6vt4qnmn3ykwcw6
+          enabled: false
+
+APIKeyDeleteBody:
+  description: The parameters to use for deleting an API key
+  required: true
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        properties:
+          id:
+            type: string
+        required:
+          - id
+        example:
+          id: api_01ce83yphmq6vt4qnmn3ykwcw6

@@ -1,0 +1,24 @@
+AccountResponse:
+  description: Returns a single account
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        $ref: 'response_schemas.yaml#/AccountResponseSchema'
+AccountsResponse:
+  description: Returns a list of accounts
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        $ref: 'response_schemas.yaml#/AccountsResponseSchema'
+MembershipsAdminsResponse:
+  description: Returns a list of membership
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        $ref: 'response_schemas.yaml#/MembershipsAdminsResponseSchema'
+MembershipsKeysResponse:
+  description: Returns a list of membership
+  content:
+    application/vnd.omisego.v1+json:
+      schema:
+        $ref: 'response_schemas.yaml#/MembershipsKeysResponseSchema'

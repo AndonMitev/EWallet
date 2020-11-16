@@ -1,0 +1,40 @@
+# App artifacts
+/_build
+/db
+/deps
+/*.ez
+
+# Ignore most files in `/priv/static` except few.
+#
+# Note that gitignore applies to the whole hierachy so we need
+# to enable each directory and its content separately.
+# For more information, see gitignore(5)
+/priv/static/*
+
+# Ignore everything in `/priv/static/private` except .gitkeep.
+!/priv/static/private
+/priv/static/private/*
+!/priv/static/private/.gitkeep
+
+# Ignore everything in `/priv/static/public` except .gitkeep.
+!/priv/static/public
+/priv/static/public/*
+!/priv/static/public/.gitkeep
+
+# ...and non-digested swagger.
+!/priv/static/public/swagger
+/priv/static/public/swagger/*
+!/priv/static/public/swagger/favicon-16x16.png
+!/priv/static/public/swagger/favicon-32x32.png
+!/priv/static/public/swagger/swagger-ui-bundle.js
+!/priv/static/public/swagger/swagger-ui-standalone-preset.js
+!/priv/static/public/swagger/swagger-ui.css
+!/priv/static/public/swagger/swagger-ui.js
+
+# ...and uploads.
+!/priv/static/public/uploads
+/priv/static/public/uploads/*
+!/priv/static/public/uploads/test.txt
+
+# Generated on crash by the VM
+erl_crash.dump
