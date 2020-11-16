@@ -1,31 +1,31 @@
-import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
-import { DangerPrimary } from './danger'
-import { ButtonPrimary, ButtonDisabled } from './primary'
-import { ButtonGhost } from './ghost'
-import { ButtonSecondary } from './secondary'
-import { Content } from './default'
+import { DangerPrimary } from './danger';
+import { ButtonPrimary, ButtonDisabled } from './primary';
+import { ButtonGhost } from './ghost';
+import { ButtonSecondary } from './secondary';
+import { Content } from './default';
 
 const buttonMapStyle = {
   primary: {
     normal: ButtonPrimary,
-    disabled: ButtonDisabled
+    disabled: ButtonDisabled,
   },
   ghost: {
     normal: ButtonGhost,
-    disabled: ButtonGhost
+    disabled: ButtonGhost,
   },
   danger: {
     normal: DangerPrimary,
-    disabled: ButtonDisabled
+    disabled: ButtonDisabled,
   },
   secondary: {
     normal: ButtonSecondary,
-    disabled: ButtonSecondary
-  }
-}
+    disabled: ButtonSecondary,
+  },
+};
 export default class Button extends PureComponent {
   static propTypes = {
     children: PropTypes.node,
@@ -37,14 +37,17 @@ export default class Button extends PureComponent {
     fluid: PropTypes.bool,
     styleType: PropTypes.oneOf(['primary', 'secondary', 'ghost', 'danger']),
     type: PropTypes.string,
-    style: PropTypes.object
-  }
+    style: PropTypes.object,
+  };
   static defaultProps = {
-    styleType: 'primary'
-  }
+    styleType: 'primary',
+  };
 
-  render () {
-    const Button = buttonMapStyle[this.props.styleType][this.props.disabled ? 'disabled' : 'normal']
+  render() {
+    const Button =
+      buttonMapStyle[this.props.styleType][
+        this.props.disabled ? 'disabled' : 'normal'
+      ];
 
     return (
       <Button
@@ -59,26 +62,28 @@ export default class Button extends PureComponent {
         type={this.props.type}
       >
         <img
-          src={require('../../../statics/images/GO-DeepBlue-White.gif')}
+          src={require('../../../statics/images/new-opn-logo.svg')}
           className='loading'
         />
         <Content loading={this.props.loading}>{this.props.children}</Content>
       </Button>
-    )
+    );
   }
 }
 
 const PureButtonText = styled.button`
   border: none;
-  color: ${props => props.theme.colors.BL400};
+  color: ${(props) => props.theme.colors.BL400};
   background-color: transparent;
   cursor: pointer;
-`
+`;
 export class PlainButton extends PureComponent {
   static propTypes = {
-    children: PropTypes.node
-  }
-  render () {
-    return <PureButtonText {...this.props}>{this.props.children}</PureButtonText>
+    children: PropTypes.node,
+  };
+  render() {
+    return (
+      <PureButtonText {...this.props}>{this.props.children}</PureButtonText>
+    );
   }
 }

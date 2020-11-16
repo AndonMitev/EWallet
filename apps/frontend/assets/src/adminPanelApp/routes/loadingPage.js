@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import styled from 'styled-components'
+import React, { Component } from 'react';
+import styled from 'styled-components';
 const Container = styled.div`
   position: relative;
   height: 100vh;
@@ -7,7 +7,7 @@ const Container = styled.div`
   img {
     max-width: 200px;
   }
-`
+`;
 const Center = styled.div`
   position: absolute;
   top: 50%;
@@ -16,15 +16,15 @@ const Center = styled.div`
   right: 0;
   text-align: center;
   margin: 0 auto;
-`
+`;
 export default class BootupPage extends Component {
-  render () {
+  render() {
     return (
       <Container>
         <Center>
-          <img src={require('../../../statics/images/omisego_logo_black.png')} />
+          <img src={require('../../../statics/images/new-OPN-White.png')} />
         </Center>
       </Container>
-    )
+    );
   }
 }

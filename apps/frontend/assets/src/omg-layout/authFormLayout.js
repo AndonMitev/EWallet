@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import styled from 'styled-components'
-import PropTypes from 'prop-types'
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 const Container = styled.div`
   position: relative;
@@ -16,11 +16,11 @@ const Container = styled.div`
   a {
     vertical-align: middle;
     :hover {
-      color: ${props => props.theme.colors.BL400};
+      color: ${(props) => props.theme.colors.BL400};
     }
-    color: ${props => props.theme.colors.B100};
+    color: ${(props) => props.theme.colors.B100};
   }
-`
+`;
 export const FormContainer = styled.div`
   position: absolute;
   left: 0;
@@ -30,23 +30,23 @@ export const FormContainer = styled.div`
   top: 20%;
   text-align: center;
   padding: 20px;
-`
-const OmisegoLogo = styled.img.attrs(props => ({
-  src: require('../../statics/images/omisego_logo_black.png')
+`;
+const OmisegoLogo = styled.img.attrs((props) => ({
+  src: require('../../statics/images/new-OPN-White.png'),
 }))`
   width: 100%;
   max-width: 350px;
-`
+`;
 const Content = styled.div`
   position: relative;
-`
+`;
 
 class AuthFormLayout extends Component {
   static propTypes = {
-    children: PropTypes.node
-  }
+    children: PropTypes.node,
+  };
 
-  render () {
+  render() {
     return (
       <Container>
         <FormContainer>
@@ -54,8 +54,8 @@ class AuthFormLayout extends Component {
           <Content>{this.props.children}</Content>
         </FormContainer>
       </Container>
-    )
+    );
   }
 }
 
-export default AuthFormLayout
+export default AuthFormLayout;
