@@ -32,7 +32,7 @@ export const FormContainer = styled.div`
   padding: 20px;
 `;
 const OmisegoLogo = styled.img.attrs((props) => ({
-  src: require('../../statics/images/new-OPN-White.png'),
+  src: require('../../statics/images/new-opn-logo.svg'),
 }))`
   width: 100%;
   max-width: 350px;

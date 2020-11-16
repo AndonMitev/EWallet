@@ -22,7 +22,7 @@ export default class BootupPage extends Component {
     return (
       <Container>
         <Center>
-          <img src={require('../../../statics/images/new-OPN-White.png')} />
+          <img src={require('../../../statics/images/new-opn-logo.svg')} />
         </Center>
       </Container>
     );
